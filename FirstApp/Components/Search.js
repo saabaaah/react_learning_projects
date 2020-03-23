@@ -12,7 +12,7 @@ class Search extends React.Component {
             <View style={search_style.container}>
             	<TextInput 	style={search_style.text_input} 
             				placeholder='Titre du film' />
-            	<Button style={search_style.text_input} 
+            	<Button
             			title='Rechercher' 
             			onPress={() => {}} />
             </View>
@@ -27,21 +27,20 @@ class Search extends React.Component {
     }
 }
 
-// Exporter cet element
-export default Search
-
 const search_style = StyleSheet.create({
   container: {
-  	flex: 1,
-  	flexDirection: 'row',
-    backgroundColor: '#DDD',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingTop: 10,
+  	flex: 0,
+    marginTop: 20,
   },
   text_input: {
-  	flex: 1,
+    marginLeft: 5,
+    marginRight: 5,
+    height: 50,
+    borderColor: '#000000',
+    borderWidth: 1,
+    paddingLeft: 5,
   },
 });
+
+// Exporter cet element
+export default Search
