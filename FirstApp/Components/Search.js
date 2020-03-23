@@ -9,9 +9,12 @@ class Search extends React.Component {
     render() {
         return (
             // Ici on rend à l'écran les éléments graphiques de notre component custom Search
-            <View >
-            	<TextInput style={search_style.text_input} placeholder='Titre du film' />
-            	<Button title='Rechercher' onPress={() => {}} />
+            <View style={search_style.container}>
+            	<TextInput 	style={search_style.text_input} 
+            				placeholder='Titre du film' />
+            	<Button style={search_style.text_input} 
+            			title='Rechercher' 
+            			onPress={() => {}} />
             </View>
             // ====== equivalent à //
             /*
@@ -29,11 +32,16 @@ export default Search
 
 const search_style = StyleSheet.create({
   container: {
+  	flex: 1,
+  	flexDirection: 'row',
     backgroundColor: '#DDD',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 10,
   },
   text_input: {
-  	marginTop: 20,
+  	flex: 1,
   },
 });
