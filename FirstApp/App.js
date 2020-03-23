@@ -1,20 +1,24 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import Search from './Components/Search'
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Hello World! by sabah.HM</Text>
-
+    // la vue principale //
+    <View >
+      <Search/>
+      <Text style={styles.text}>Hello World! by sabah.HM</Text>      
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#DDD',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  text: {
+    backgroundColor: '#DDD',
+  }
 });
