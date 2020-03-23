@@ -10,7 +10,7 @@ class Search extends React.Component {
         return (
             // Ici on rend à l'écran les éléments graphiques de notre component custom Search
             <View >
-            	<TextInput placeholder='User name' />
+            	<TextInput style={search_style.text_input} placeholder='Titre du film' />
             	<Button title='Rechercher' onPress={() => {}} />
             </View>
             // ====== equivalent à //
@@ -32,5 +32,8 @@ const search_style = StyleSheet.create({
     backgroundColor: '#DDD',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  text_input: {
+  	marginTop: 20,
   },
 });
