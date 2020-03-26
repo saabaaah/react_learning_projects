@@ -2,7 +2,7 @@
 import React from 'react'
 
 // importer les composant basiques (web)
-import { StyleSheet, View, TextInput, Button, FlatList } from 'react-native'
+import { StyleSheet, View, TextInput, Button, FlatList, ActivityIndicator } from 'react-native'
 import { getFilmsFromApiWithSearchedText }  from '../API/TMDBApi'
 
 import films from '../Helpers/filmsData'
@@ -17,6 +17,7 @@ class Search extends React.Component {
         // initialiser la liste des films à Vide
         this.state = {
             films: [],
+            isLoading: false, // au debut aucun chargement 
         };
         // initialiser le mot cherché à nul
         this.searchedText = "";
@@ -32,11 +33,17 @@ class Search extends React.Component {
     // Récupérer la liste des films depuis l'API //
     _loadFilms(){
         console.log("\n Recherche : "+this.searchedText)
+        this.setState({
+                    isLoading: true, // Début du chargement 
+                });
         // verifier le mot cherché //
         if(this.searchedText.length > 0){
             getFilmsFromApiWithSearchedText(this.searchedText).then(data => {
                 // sauvegarder les films dans l'attribut //
-                this.setState({films: data.results});
+                this.setState({
+                    films: data.results,
+                    isLoading: false, // Arrêt du chargement
+                });
                 /* PROPS :: en utilisant les props ( à eviter) 
                 this._films = data.results;
                 this.forceUpdate();
@@ -45,13 +52,26 @@ class Search extends React.Component {
         }
     }
 
+    // afficher une barre de preogression lors le chargement //
+    _displayLoading(){
+        if(this.state.isLoading){
+            // si on est au cours de chargement, retourner un indicateur :
+            return(
+                <View style={styles.loading_container}>
+                    <ActivityIndicator size='large' />
+                </View>
+                )
+        }
+    }
+
     // Faire le rendu de la page de recherche //
     render() {
-        console.log("\n-----------------\nRENDER - SEARCH");
+        console.log("\n>>>> RENDER - SEARCH <<<<");
+        console.log("-Chargement : "+this.state.isLoading)
         return (
             // Ici on rend à l'écran les éléments graphiques de notre component custom Search
-            <View style={search_style.container}>
-            	<TextInput 	style={search_style.text_input} 
+            <View style={styles.container}>
+            	<TextInput 	style={styles.text_input} 
             				placeholder='Titre du film' 
                             onChangeText={(text) => this._searchedTextChanged(text)}
                             onSubmitEditing={() => this._loadFilms()}
@@ -65,7 +85,8 @@ class Search extends React.Component {
                   data={this.state.films} 
                   keyExtractor={(item) => item.id.toString()} // ajouter des clés 
                   renderItem= {({item}) => <FilmItem film={item}/>}
-              />
+                />
+                { this._displayLoading() }
             </View>
             // ====== equivalent à //
             /*
@@ -78,7 +99,7 @@ class Search extends React.Component {
     }
 }
 
-const search_style = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
   	flex: 9,
     marginTop: 20,
@@ -93,7 +114,16 @@ const search_style = StyleSheet.create({
   },
   film_list: {
     flex: 8,
-  }
+  },
+  loading_container: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 100,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 // Exporter cet element
