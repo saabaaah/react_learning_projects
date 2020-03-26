@@ -2,10 +2,32 @@
 import React from 'react'
 
 // importer les composant basiques (web)
-import { StyleSheet, View, TextInput, Button } from 'react-native'
+import { StyleSheet, View, TextInput, Button, FlatList } from 'react-native'
+import { getFilmsFromApiWithSearchedText }  from '../API/TMDBApi'
 
+import films from '../Helpers/filmsData'
+import FilmItem from './FilmItem'
 
 class Search extends React.Component {
+
+    // Contructeur //
+    constructor(props){
+        super(props);
+
+        // initialiser la liste des films à Vide
+        this._films = [];
+    }
+
+    // Récupérer la liste des films depuis l'API //
+    _loadFilms(){
+        getFilmsFromApiWithSearchedText("star").then(data => {
+            // sauvegarder les films dans l'attribut //
+            this._films = data.results;
+            this.forceUpdate();
+        });
+    }
+
+    // Faire le rendu de la page de recherche //
     render() {
         return (
             // Ici on rend à l'écran les éléments graphiques de notre component custom Search
@@ -14,7 +36,12 @@ class Search extends React.Component {
             				placeholder='Titre du film' />
             	<Button
             			title='Rechercher' 
-            			onPress={() => {}} />
+            			onPress={() => this._loadFilms()} />
+                <FlatList
+                  data={this._films} 
+                  keyExtractor={(item) => item.id.toString()} // ajouter des clés 
+                  renderItem= {({item}) => <FilmItem film={item}/>}
+              />
             </View>
             // ====== equivalent à //
             /*
