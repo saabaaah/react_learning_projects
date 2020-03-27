@@ -21,8 +21,11 @@ class Search extends React.Component {
         };
         // initialiser le mot cherché à nul
         this.searchedText = "";
-        // PROPS :: en utilisant les props ( à eviter) 
-        //this._films = [];
+
+        // PAGINATION :
+        this.page = 0 // Compteur pour connaître la page courante
+        this.totalPages = 0 // Nombre de pages totales pour savoir si on a atteint la fin des retours de l'API         // PROPS :: en utilisant les props ( à eviter) 
+
     }
 
     // suivre le texte du mot à chercher //
@@ -31,19 +34,39 @@ class Search extends React.Component {
     }
 
     // Récupérer la liste des films depuis l'API //
+    _searchFilms() {
+        // Ici on va remettre à zéro les films de notre state
+        this.page = 0
+        this.totalPages = 0
+        this.setState({
+        films: []
+        }, () =>{
+            // callback de setState qui est asynchrone :
+            // charger la nouvelle recherche //
+            this._loadFilms()
+        })
+
+    }
+    // Récupérer la liste suivante des films depuis l'API //
     _loadFilms(){
         console.log("\n Recherche : "+this.searchedText)
-        this.setState({
-                    isLoading: true, // Début du chargement 
-                });
+
         // verifier le mot cherché //
         if(this.searchedText.length > 0){
-            getFilmsFromApiWithSearchedText(this.searchedText).then(data => {
+            this.setState({
+                isLoading: true, // Début du chargement 
+            });
+            getFilmsFromApiWithSearchedText(this.searchedText, this.page+1).then(data => {
                 // sauvegarder les films dans l'attribut //
                 this.setState({
-                    films: data.results,
+                    films: [...this.state.films, ...data.results], // == this.state.films.concat(data.results)
                     isLoading: false, // Arrêt du chargement
                 });
+
+                // PAGINATION : récupérer les données //
+                this.page = data.page;
+                this.totalPages = data.total_pages;
+
                 /* PROPS :: en utilisant les props ( à eviter) 
                 this._films = data.results;
                 this.forceUpdate();
@@ -74,7 +97,7 @@ class Search extends React.Component {
             	<TextInput 	style={styles.text_input} 
             				placeholder='Titre du film' 
                             onChangeText={(text) => this._searchedTextChanged(text)}
-                            onSubmitEditing={() => this._loadFilms()}
+                            onSubmitEditing={() => this._searchFilms()}
                             //defaultValue='Hello'
                             returnKeyType='search' //NORMS : done, go, next, search, send,
                 />
@@ -85,16 +108,23 @@ class Search extends React.Component {
                   data={this.state.films} 
                   keyExtractor={(item) => item.id.toString()} // ajouter des clés 
                   renderItem= {({item}) => <FilmItem film={item}/>}
+                  onEndReachedThreshold={0.5}
+                  onEndReached={() => {
+                    // charger les pages restantes
+                    if (this.page < this.totalPages){
+                        this._loadFilms();
+                    }
+                    console.log("onEndReached");
+                  }}
                 />
                 { this._displayLoading() }
             </View>
-            // ====== equivalent à //
-            /*
-			React.createElement(View, {},
-			  	React.createElement(TextInput, {placeholder: "Titre du film"}),
-			    React.createElement(Button, {title: "Rechercher", onPress: () => {}})
-			)
-            */
+
+            // equivalent à ://
+			// React.createElement(View, {},
+			//   	React.createElement(TextInput, {placeholder: "Titre du film"}),
+			//     React.createElement(Button, {title: "Rechercher", onPress: () => {}})
+			// )
         )
     }
 }

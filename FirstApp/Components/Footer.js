@@ -21,14 +21,15 @@ export default Footer
 
 const footer_style = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 0,
     backgroundColor: '#EAE',
     justifyContent: 'center',
   },
   text: {
   	//marginTop: 20,
     //height: 50,
-    flex: 1,
+    padding: 6,
+    flex: 0,
     textAlign: 'center',
   },
 });
