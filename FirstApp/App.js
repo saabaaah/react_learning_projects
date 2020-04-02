@@ -1,13 +1,14 @@
 import React from 'react';
+import 'react-native-gesture-handler';
 import { StyleSheet, Text, View } from 'react-native';
 
-import Search from './Components/Search'
+import Navigation from './Navigation/Navigation'
 import Footer from './Components/Footer'
 export default function App() {
   return (
     // la vue principale //
     <View style={styles.main_container} >
-      <Search/>
+      <Navigation/>
       <Footer/>    
     </View>
   );

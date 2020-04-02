@@ -86,11 +86,17 @@ class Search extends React.Component {
                 )
         }
     }
+    // afficher le détail d'un film //
+    _displayDetailForFilm = (idFilm) => {
+        //console.log("Display film with id " + idFilm);
+        this.props.navigation.navigate("FilmDetail", {idFilm: idFilm});
+    }
 
     // Faire le rendu de la page de recherche //
     render() {
         console.log("\n>>>> RENDER - SEARCH <<<<");
         console.log("-Chargement : "+this.state.isLoading)
+        //console.log(this.props)
         return (
             // Ici on rend à l'écran les éléments graphiques de notre component custom Search
             <View style={styles.container}>
@@ -107,7 +113,7 @@ class Search extends React.Component {
                 <FlatList
                   data={this.state.films} 
                   keyExtractor={(item) => item.id.toString()} // ajouter des clés 
-                  renderItem= {({item}) => <FilmItem film={item}/>}
+                  renderItem= {({item}) => <FilmItem film={item} displayDetailForFilm={this._displayDetailForFilm} />}
                   onEndReachedThreshold={0.5}
                   onEndReached={() => {
                     // charger les pages restantes

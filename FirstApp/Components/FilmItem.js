@@ -1,16 +1,20 @@
 // Components/FilmItem.js
 
 import React from 'react'
-import { StyleSheet, View, Text, Image } from 'react-native'
+import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native'
 import { getImageFromApi }  from '../API/TMDBApi'
 
 class FilmItem extends React.Component {
   render() {
-  	console.log(this.props)
 
+    // RÉCUPÉRER LES PROPRIÉTÉS // 
   	const active_film = this.props.film
+    const displayDetailForFilm = this.props.displayDetailForFilm
+
+    console.log(displayDetailForFilm)
     return (
-      <View style={styles.main_container}>
+      <TouchableOpacity style={styles.main_container}
+        onPress={() => displayDetailForFilm(active_film)}>
         <Image
           style={styles.image}
           source={{uri: getImageFromApi(active_film.poster_path)}}
@@ -28,7 +32,7 @@ class FilmItem extends React.Component {
             <Text style={styles.date_text}>Sorti le {active_film.release_date}</Text>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     )
   }
 }
