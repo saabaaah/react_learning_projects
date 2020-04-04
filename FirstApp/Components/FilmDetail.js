@@ -1,10 +1,11 @@
 // Components/FilmDetail.js
 
 import React from 'react'
-import { StyleSheet, View, Text, Image, ScrollView, ActivityIndicator } from 'react-native'
+import { StyleSheet, View, Text, Button, Image, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native'
 import { getImageFromApi, getFilmDetailFromApi }  from '../API/TMDBApi'
 import moment from 'moment'
 import numeral from 'numeral'
+import { connect } from 'react-redux'
 
 class FilmDetail extends React.Component {
     // constructeur de l'objet //
@@ -27,6 +28,11 @@ class FilmDetail extends React.Component {
           )
       }
     }
+    componentDidUpdate() {
+      console.log("componentDidUpdate : ")
+      console.log(this.props.favoritesFilm)
+    }
+
     // charger les détails du film à partir de l'API//
     componentDidMount() {
       console.log("componentDidMount");
@@ -44,6 +50,26 @@ class FilmDetail extends React.Component {
       //   film: this.props.navigation.state.params.idFilm,
       //   isLoading:false, 
       // });
+    }
+    _toggleFavorite() {
+      const action = { type: "TOGGLE_FAVORITE", value: this.state.film }
+      this.props.dispatch(action)
+      console.log(action);
+    }
+
+    // Affichage des images favoris/non favoris //
+    _displayFavoriteImage() {
+        var sourceImage = require('../Images/ic_favorite_border.png')
+        if (this.props.favoritesFilm.findIndex(item => item.id === this.state.film.id) !== -1) {
+          // Film dans nos favoris
+          sourceImage = require('../Images/ic_favorite.png')
+        }
+        return (
+          <Image
+            style={styles.favorite_image}
+            source={sourceImage}
+          />
+        )
     }
 
     // retourner l'affichage du film //
@@ -63,6 +89,11 @@ class FilmDetail extends React.Component {
               source={{uri: getImageFromApi(active_film.backdrop_path)}}
             />
             <Text style={styles.title_text}>{active_film.title}</Text>
+            <TouchableOpacity
+              style={styles.favorite_container}
+              onPress={()=> this._toggleFavorite()}>
+              {this._displayFavoriteImage()}
+            </TouchableOpacity>
             <Text style={styles.description_text}>{active_film.overview}</Text>
             <Text style={styles.default_text}>Sorti le {moment(new Date(active_film.release_date)).format('DD/MM/YYYY')}</Text>
             <Text style={styles.default_text}>Note : {active_film.vote_average} / 10</Text>
@@ -87,7 +118,6 @@ class FilmDetail extends React.Component {
                 return country.iso_3166_1;
               }).join(' & ') }
             </Text>
-
           </ScrollView>
         )
       }
@@ -150,7 +180,32 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     marginRight: 5,
     marginTop: 5,
+  },
+  favorite_container: {
+    alignItems: 'center',
+  },
+  favorite_image: {
+    width: 40,
+    height: 40,
   }
 })
 
-export default FilmDetail
+// Acces au state global //
+const mapStateToProps = (state) => {
+  console.log("mapStateToProps");
+  console.log(state);
+  return{
+    favoritesFilm: state.favoritesFilm,
+  }
+}
+
+// lancement de dispatch !!!!
+const mapDispatchToProps = (dispatch) => {
+  return {
+    dispatch: (action) => { dispatch(action) }
+  }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(FilmDetail)
+

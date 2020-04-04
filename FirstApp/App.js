@@ -4,13 +4,20 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import Navigation from './Navigation/Navigation'
 import Footer from './Components/Footer'
+
+// importer les elements du redux //
+import { Provider } from 'react-redux'
+import Store from './Store/configureStore'
+
 export default function App() {
   return (
     // la vue principale //
-    <View style={styles.main_container} >
-      <Navigation/>
-      <Footer/>    
-    </View>
+    <Provider store={Store}>
+      <View style={styles.main_container} >
+        <Navigation/>
+        <Footer/>    
+      </View>
+    </Provider>
   );
 }
 

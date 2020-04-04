@@ -7,7 +7,7 @@ import { getFilmsFromApiWithSearchedText }  from '../API/TMDBApi'
 
 import films from '../Helpers/filmsData'
 import FilmItem from './FilmItem'
-
+import {connect} from 'react-redux'
 class Search extends React.Component {
 
     // Contructeur //
@@ -112,8 +112,15 @@ class Search extends React.Component {
             			onPress={() => this._loadFilms()} />
                 <FlatList
                   data={this.state.films} 
+                  extraData={this.state.favoritesFilm} 
                   keyExtractor={(item) => item.id.toString()} // ajouter des clés 
-                  renderItem= {({item}) => <FilmItem film={item} displayDetailForFilm={this._displayDetailForFilm} />}
+                  renderItem= {({item}) => 
+                    <FilmItem 
+                        film={item} 
+                        isFilmFavorite={(this.props.favoritesFilm.findIndex(
+                            film => film.id === item.id) !== -1)? true: false}
+                        displayDetailForFilm={this._displayDetailForFilm} 
+                    />}
                   onEndReachedThreshold={0.5}
                   onEndReached={() => {
                     // charger les pages restantes
@@ -162,5 +169,12 @@ const styles = StyleSheet.create({
   },
 });
 
-// Exporter cet element
-export default Search
+// On connecte le store Redux, ainsi que les films favoris du state de notre application, à notre component Search
+const mapStateToProps = state => {
+  return {
+    favoritesFilm: state.favoritesFilm
+  }
+}
+
+export default connect(mapStateToProps)(Search)
+
