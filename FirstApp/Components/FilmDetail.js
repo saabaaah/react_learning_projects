@@ -19,14 +19,43 @@ import numeral from 'numeral'
 import { connect } from 'react-redux'
 
 class FilmDetail extends React.Component {
-    // constructeur de l'objet //
-    constructor(props){
-      super(props);
-      this.state = {
-        film: undefined, // le film actif
-        isLoading: true, // en cours de chargement?
+
+  // créer un bouton de menu pour le partage //
+  static navigationOptions = ({ navigation }) => {
+    const { params } = navigation.state
+
+    // verifier le film & la plateforme //
+    if(params.film != undefined && Platform.OS == 'ios'){
+      return {
+        headerRight: <TouchableOpacity
+                        style = {styles.share_touchable_headerrightbutton}
+                        onPress = {() => params.shareFilm()}>
+                        <Image
+                          style={styles.share_image}
+                          source={require('../Images/ic_share.ios.png')}
+                        />
+                      </TouchableOpacity>
       }
     }
+  }
+  // constructeur de l'objet //
+  constructor(props){
+    super(props);
+    this.state = {
+      film: undefined, // le film actif
+      isLoading: true, // en cours de chargement?
+    }
+
+    this._shareFilm = this._shareFilm.bind(this)
+  }
+
+  // mettre à jour les données de la navigation //
+  _updateNavigationParams(){
+    this.props.navigation.setParams({
+      shareFilm: this._shareFilm,
+      film: this.state.film,
+    })
+  }
 
 
     // retourner l'affichage de la barre de chargement //
@@ -46,14 +75,24 @@ class FilmDetail extends React.Component {
 
     // charger les détails du film à partir de l'API//
     componentDidMount() {
-      console.log("componentDidMount");
+      console.log("componentDidMount")
+      // verifier si le film est recuperé //
+      const favoriteFilmIndex = this.props.favoritesFilm.findIndex(item => item.id === this.props.navigation.state.params.idFilm)
+      if(favoriteFilmIndex !== -1 ){
+        this.setState({
+          film: this.props.favoritesFilm[favoriteFilmIndex]
+        }, () => { this._updateNavigationParams() })
+        return
+      }
+      // mettre à jour //
+      this.setState({ isLoading: true })
       getFilmDetailFromApi(this.props.navigation.state.params.idFilm.id).then(data => {
           // get movie details from API //
           console.log(data);
           this.setState({
             film: data,
             isLoading:false, 
-          });
+          }, () => { this._updateNavigationParams() })
       })
 
       // get movie static //
@@ -139,11 +178,11 @@ class FilmDetail extends React.Component {
       const { film } = this.state
       Share.share({title:film.title, message: film.overview})
     }
-
+    
     // afficher un bouton android flottant //
     _displayFloatingActionButton(){
       const { film } = this.state
-      if (film != undefined && Platform.OS === 'android') { // Uniquement sur Android et lorsque le film est chargé
+      if (film != undefined && Platform.OS === 'ios') { // Uniquement sur Android et lorsque le film est chargé
           return (
             <TouchableOpacity
               style={styles.share_touchable_floatingactionbuttion}
@@ -240,6 +279,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#ef5350',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  share_touchable_headerrightbutton: {
+    marginRight: 8,
   }
 })
 
