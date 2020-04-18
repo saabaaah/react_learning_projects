@@ -178,11 +178,11 @@ class FilmDetail extends React.Component {
       const { film } = this.state
       Share.share({title:film.title, message: film.overview})
     }
-    
+
     // afficher un bouton android flottant //
     _displayFloatingActionButton(){
       const { film } = this.state
-      if (film != undefined && Platform.OS === 'ios') { // Uniquement sur Android et lorsque le film est chargé
+      if (film != undefined && Platform.OS === 'android') { // Uniquement sur Android et lorsque le film est chargé
           return (
             <TouchableOpacity
               style={styles.share_touchable_floatingactionbuttion}
