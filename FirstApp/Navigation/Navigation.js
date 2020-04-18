@@ -2,12 +2,19 @@
 import React from 'react'
 import { StyleSheet, Image } from 'react-native'
 
+// composants des plateformes, cela ne fonctionne pas! //
+// import { ...,Platform } from 'react-native'
+
+// composants des navigations //
 import { createAppContainer } from 'react-navigation'
 import { createStackNavigator } from 'react-navigation-stack'
 import { createBottomTabNavigator } from 'react-navigation-tabs'
+
+// composants personnalisés //
 import Search from '../Components/Search'
 import FilmDetail from '../Components/FilmDetail'
 import Favorites from '../Components/Favorites'
+import Test from '../Components/Test'
 
 const SearchStackNavigator = createStackNavigator({
   Search: { // Ici j'ai appelé la vue "Search" mais on peut mettre ce que l'on veut. C'est le nom qu'on utilisera pour appeler cette vue
@@ -59,6 +66,12 @@ const MoviesTabNavigator = createBottomTabNavigator({
                 />
       }
     }
+  },
+  Test: { // Ici j'ai appelé la vue "Search" mais on peut mettre ce que l'on veut. C'est le nom qu'on utilisera pour appeler cette vue
+    screen: Test,
+    navigationOptions: {
+      title: 'Test!'
+    }
   }
 },
 {
@@ -72,10 +85,28 @@ const MoviesTabNavigator = createBottomTabNavigator({
 )
 
 const styles = StyleSheet.create({
+
+  // Définir par  condition sur les platformes // 
   tab_icon: {
-    width: 30,
-    height: 30
-  }
+
+    width: Platform.OS == 'ios' ? 30 : 50,
+    height: Platform.OS == 'ios' ? 30 : 50,
+  },
+
+  // Définir par choix de platformes // 
+  tab_icon: {
+    ...Platform.select({
+      ios: {
+        width: 30,
+        height: 30
+      },      
+      android: {
+        width: 20,
+        height: 20
+      },
+    })
+  },
+
 })
 
 export default createAppContainer(MoviesTabNavigator)
