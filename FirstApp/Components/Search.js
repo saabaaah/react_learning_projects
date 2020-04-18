@@ -6,7 +6,7 @@ import { StyleSheet, View, TextInput, Button, FlatList, ActivityIndicator } from
 import { getFilmsFromApiWithSearchedText }  from '../API/TMDBApi'
 
 import films from '../Helpers/filmsData'
-import FilmItem from './FilmItem'
+import FilmList from './FilmList'
 import {connect} from 'react-redux'
 class Search extends React.Component {
 
@@ -20,12 +20,16 @@ class Search extends React.Component {
             isLoading: false, // au debut aucun chargement 
         };
         // initialiser le mot cherché à nul
-        this.searchedText = "";
+        this.searchedText = "panda";
 
         // PAGINATION :
         this.page = 0 // Compteur pour connaître la page courante
         this.totalPages = 0 // Nombre de pages totales pour savoir si on a atteint la fin des retours de l'API         // PROPS :: en utilisant les props ( à eviter) 
-
+        this._loadFilms = this._loadFilms.bind(this)
+    }
+    filmList(loadFilms) {
+        console.log("Log 2 | title : " + this.searchedText)
+        loadFilms()
     }
 
     // suivre le texte du mot à chercher //
@@ -47,10 +51,12 @@ class Search extends React.Component {
         })
 
     }
+
+
     // Récupérer la liste suivante des films depuis l'API //
     _loadFilms(){
-        console.log("\n Recherche : "+this.searchedText)
-
+        console.log("Contenu de test : " + this.test)
+        console.log("Log 3 | title : " + this.searchedText)
         // verifier le mot cherché //
         if(this.searchedText.length > 0){
             this.setState({
@@ -86,16 +92,13 @@ class Search extends React.Component {
                 )
         }
     }
-    // afficher le détail d'un film //
-    _displayDetailForFilm = (idFilm) => {
-        //console.log("Display film with id " + idFilm);
-        this.props.navigation.navigate("FilmDetail", {idFilm: idFilm});
-    }
+
 
     // Faire le rendu de la page de recherche //
     render() {
         console.log("\n>>>> RENDER - SEARCH <<<<");
         console.log("-Chargement : "+this.state.isLoading)
+        console.log("Log 1 | title : " + this.searchedText)
         //console.log(this.props)
         return (
             // Ici on rend à l'écran les éléments graphiques de notre component custom Search
@@ -110,25 +113,14 @@ class Search extends React.Component {
             	<Button
             			title='Rechercher' 
             			onPress={() => this._loadFilms()} />
-                <FlatList
-                  data={this.state.films} 
-                  extraData={this.state.favoritesFilm} 
-                  keyExtractor={(item) => item.id.toString()} // ajouter des clés 
-                  renderItem= {({item}) => 
-                    <FilmItem 
-                        film={item} 
-                        isFilmFavorite={(this.props.favoritesFilm.findIndex(
-                            film => film.id === item.id) !== -1)? true: false}
-                        displayDetailForFilm={this._displayDetailForFilm} 
-                    />}
-                  onEndReachedThreshold={0.5}
-                  onEndReached={() => {
-                    // charger les pages restantes
-                    if (this.page < this.totalPages){
-                        this._loadFilms();
-                    }
-                    console.log("onEndReached");
-                  }}
+                <FilmList
+                    loadFilms={this._loadFilms}
+                    films={this.state.films}
+                    navigation={this.props.navigation}
+                    page={this.page}
+                    totalPages={this.totalPages}
+                    favoriteList={false}
+                    test={"Données du FilmList"}
                 />
                 { this._displayLoading() }
             </View>
@@ -169,12 +161,6 @@ const styles = StyleSheet.create({
   },
 });
 
-// On connecte le store Redux, ainsi que les films favoris du state de notre application, à notre component Search
-const mapStateToProps = state => {
-  return {
-    favoritesFilm: state.favoritesFilm
-  }
-}
 
-export default connect(mapStateToProps)(Search)
+export default Search
 

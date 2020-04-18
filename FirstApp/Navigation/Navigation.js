@@ -23,6 +23,20 @@ const SearchStackNavigator = createStackNavigator({
     }
   }
 })
+const FavoritesStackNavigator = createStackNavigator({
+  Favorites: { // Ici j'ai appelé la vue "Favorites" mais on peut mettre ce que l'on veut. C'est le nom qu'on utilisera pour appeler cette vue
+    screen: Favorites,
+    navigationOptions: {
+      title: 'Favoris'
+    }
+  },
+  FilmDetail: { // Ici j'ai appelé la vue "Search" mais on peut mettre ce que l'on veut. C'est le nom qu'on utilisera pour appeler cette vue
+    screen: FilmDetail,
+    navigationOptions: {
+      title: 'Détails'
+    }
+  }
+})
 const MoviesTabNavigator = createBottomTabNavigator({
   Search: { // Ici j'ai appelé la vue "Search" mais on peut mettre ce que l'on veut. C'est le nom qu'on utilisera pour appeler cette vue
     screen: SearchStackNavigator,
@@ -36,7 +50,7 @@ const MoviesTabNavigator = createBottomTabNavigator({
     }
   },
   Favorites: { // Ici j'ai appelé la vue "Search" mais on peut mettre ce que l'on veut. C'est le nom qu'on utilisera pour appeler cette vue
-    screen: Favorites,
+    screen: FavoritesStackNavigator,
     navigationOptions: {
       tabBarIcon: () => {
         return <Image
