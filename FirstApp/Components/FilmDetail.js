@@ -1,8 +1,19 @@
 // Components/FilmDetail.js
 
 import React from 'react'
-import { StyleSheet, View, Text, Button, Image, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native'
+import {  StyleSheet, 
+          View, 
+          Text, 
+          Button, 
+          Image, 
+          ScrollView, 
+          ActivityIndicator, 
+          TouchableOpacity,
+          Share,
+          Platform } from 'react-native'
 import { getImageFromApi, getFilmDetailFromApi }  from '../API/TMDBApi'
+
+// les composants personnalisés //
 import moment from 'moment'
 import numeral from 'numeral'
 import { connect } from 'react-redux'
@@ -123,6 +134,29 @@ class FilmDetail extends React.Component {
       }
     }
 
+    // partager ce film //
+    _shareFilm(){
+      const { film } = this.state
+      Share.share({title:film.title, message: film.overview})
+    }
+
+    // afficher un bouton android flottant //
+    _displayFloatingActionButton(){
+      const { film } = this.state
+      if (film != undefined && Platform.OS === 'android') { // Uniquement sur Android et lorsque le film est chargé
+          return (
+            <TouchableOpacity
+              style={styles.share_touchable_floatingactionbuttion}
+              onPress={() => this._shareFilm()}>
+              <Image
+                style={styles.share_image}
+                source={require('../Images/ic_share.android.png')} />
+            </TouchableOpacity>
+          )
+      }
+
+    }
+
 
   render() {
   	//console.log(this.props)
@@ -132,6 +166,7 @@ class FilmDetail extends React.Component {
       <View style={styles.main_container}>
         {this._displayLoading()}
         {this._displayFilm()}
+        {this._displayFloatingActionButton()}
       </View>
     )
     
@@ -187,6 +222,24 @@ const styles = StyleSheet.create({
   favorite_image: {
     width: 40,
     height: 40,
+  },
+  share_image: {
+    width: 30,
+    height: 30,
+  },
+  share_touchable_floatingactionbuttion: {
+    // positionning 
+    position: 'absolute',
+    width: 60,
+    height: 60,
+    right: 10,
+    bottom: 10,
+    paddingLeft: 5,
+    // forme 
+    borderRadius: 30,
+    backgroundColor: '#ef5350',
+    alignItems: 'center',
+    justifyContent: 'center',
   }
 })
 

@@ -2,7 +2,7 @@
 import React from 'react'
 
 // importer les composant basiques (web)
-import { StyleSheet, View, TextInput, Button, FlatList, ActivityIndicator } from 'react-native'
+import { StyleSheet, View, SafeAreaView, TextInput, Button, FlatList, ActivityIndicator } from 'react-native'
 import { getFilmsFromApiWithSearchedText }  from '../API/TMDBApi'
 
 import films from '../Helpers/filmsData'
@@ -102,7 +102,7 @@ class Search extends React.Component {
         //console.log(this.props)
         return (
             // Ici on rend à l'écran les éléments graphiques de notre component custom Search
-            <View style={styles.container}>
+            <SafeAreaView style={styles.container}>
             	<TextInput 	style={styles.text_input} 
             				placeholder='Titre du film' 
                             onChangeText={(text) => this._searchedTextChanged(text)}
@@ -123,7 +123,7 @@ class Search extends React.Component {
                     test={"Données du FilmList"}
                 />
                 { this._displayLoading() }
-            </View>
+            </SafeAreaView>
 
             // equivalent à ://
 			// React.createElement(View, {},
